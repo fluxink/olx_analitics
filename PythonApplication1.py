@@ -55,9 +55,11 @@ def get_page_data(html):
 					#time.replace('\u200e','').replace('\uff0b', '+').replace('\u20bd', ''), 
 					#url.replace('\u200e','').replace('\uff0b', '+').replace('\u20bd', '')]
 
+		city_i = city.split(',')
+
 		one_offer = [title.encode('cp1251', 'ignore').decode('cp1251'), 
 					price.encode('cp1251', 'ignore').decode('cp1251'), 
-					city.encode('cp1251', 'ignore').decode('cp1251'), 
+					city_i[0].encode('cp1251', 'ignore').decode('cp1251'), 
 					time.encode('cp1251', 'ignore').decode('cp1251'), 
 					url.encode('cp1251', 'ignore').decode('cp1251')]
 

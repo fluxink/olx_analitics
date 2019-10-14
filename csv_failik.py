@@ -36,15 +36,14 @@ class Csv_failik():
 		data = []
 
 		with open(file_name, 'r', encoding='cp1251', newline='') as f:
-			reader = csv.reader(f, delimite=';')
+			reader = csv.reader(f, delimiter=';')
 			for row in reader:
 				price_i = row[1].replace('грн.', '').replace(' ', '')
 				try:
-					price_i = int(price)
+					price_i = int(price_i)
 				except:
 					price_i = 0
 				one_post = Post.Post(name = row[0], price = price_i, city = row[2], date = row[3], url = row[4])
 				data.append(one_post)
 
 		return data
-
