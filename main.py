@@ -33,7 +33,7 @@ class Datawindow():
 
         self.data_window = Toplevel(root)
         self.data_window.title('Сбор данных')
-        self.data_window.geometry('250x300')
+        self.data_window.geometry('290x250')
         self.data_window.grab_set()
         self.data_window.focus()
 
@@ -42,6 +42,14 @@ class Datawindow():
 
         self.entry_search = Entry(self.data_window, width=30, textvariable = self.search_request)
         self.entry_search.grid(column=0, row=1, sticky=W)
+
+        self.lbl_page = Label(self.data_window, text='Число страниц')
+        self.lbl_page.grid(column=1, row=0, sticky=W)
+        
+        vcmd = (self.data_window.register(self.callback))
+
+        self.number_pages = Spinbox(self.data_window, from_=1, to=1000, textvariable=number_of_pages, width=5, validate='all', validatecommand=(vcmd, '%P'))
+        self.number_pages.grid(column=1, row=1)
 
         self.lbl1_1 = Label(self.data_window, text='Категория')
         self.lbl1_1.grid(column=0, row=2, sticky=W)
@@ -68,6 +76,12 @@ class Datawindow():
         self.start_button.grid(column=0, row=13)
 
         #self.data_window.mainloop()
+
+    def callback(self, P):
+        if str.isdigit(P) or P == "":
+            return True
+        else:
+            return False
 
     def event_cmbbx1(self, event):
         event1 = event
@@ -347,6 +361,7 @@ file_name = 'olx.csv'
 
 second_window = Datawindow()
 
+number_of_pages = StringVar()
 avgp = StringVar()
 minp = StringVar()
 maxp = StringVar()
