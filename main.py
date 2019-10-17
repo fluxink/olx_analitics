@@ -320,7 +320,7 @@ class Datawindow():
         print(url)
         global file_name
         file_name = 'olx.csv'
-        PythonApplication1.start(url, file_name)
+        PythonApplication1.start(url, file_name, number_of_pages.get())
         process_file(file_name)
 
 def process_file(file_name):

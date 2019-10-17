@@ -68,15 +68,35 @@ def get_page_data(html):
 	print(len(data))
 	return (data)
 
-def start(url, file_name):
+def start(url, file_name, pages):
+	
+	try:
+		usr_pages = int(pages)
+	except:
+		usr_pages = ''
+
 	page_part = '/?page='
 	csv_file = csv_failik.Csv_failik()
 
 	total_pages = get_total_pages(get_html(url))
 
+	try:
+		if total_pages < usr_pages:
+			gnrl_pages = total_pages
+
+		elif usr_pages < total_pages:
+			gnrl_pages = usr_pages
+
+		else:
+			gnrl_pages = total_pages
+	except:
+		gnrl_pages = total_pages
+
 	csv_file.create_csv(file_name)
 
-	for i in range(1, 3):
+	print('Будет обработано страниц: ' + str(gnrl_pages))
+
+	for i in range(1, gnrl_pages):
 		url_gen = url + page_part + str(i)
 		html = get_html(url_gen)		
 		csv_file.write_csv(file_name, data=get_page_data(html))
