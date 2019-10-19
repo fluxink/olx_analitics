@@ -328,6 +328,7 @@ def process_file(file_name):
 
     data = csv_process.read_csv(file_name)
     cities_list = process.cities(data)
+    times = process.time_of_offers(data)
 
     cntof.set(str(len(data)))
     general_prices = process.avg_price_total(data)
@@ -336,7 +337,19 @@ def process_file(file_name):
     maxp.set(str(general_prices[2]))
     ctcount.set(str(len(cities_list)))
 
+    lbl_today_value['text'] = times['Сегодня']
+    lbl_yesterday_value['text'] = times['Вчера']
+
+    cmbbox_time['values'] = process.time_list(data)
+
     cmbbox2_1['values'] = cities_list
+
+def time_select(event):
+    csv_process = csv_failik.Csv_failik()
+    data = csv_process.read_csv(file_name)
+    times = process.time_of_offers(data)
+
+    lbl_time_value['text'] = times[cmbbox_time.get()]
 
 def city_select(event):
     csv_process = csv_failik.Csv_failik()
@@ -355,7 +368,7 @@ def city_select(event):
 
 root = Tk()
 root.title('OLX Analitics')
-root.geometry('400x600')
+root.geometry('420x600')
 
 file_name = 'olx.csv'
 
@@ -422,6 +435,24 @@ lblvalue_max_price_in_city = Label(tab2_frame3, text='-')
 lblvalue_max_price_in_city.grid(column=1, row=3, sticky=W)
 
 tab2_frame3.grid(column=0, row=4, sticky=EW)
+
+frame1 = LabelFrame(root, text='Количество объявлений по дате')
+
+lbl_today = Label(frame1, text='Сегодня:').grid(column=0, row=0, sticky=W)
+lbl_yesterday = Label(frame1, text='Вчера:').grid(column=0, row=1, sticky=W)
+lbl_today_value = Label(frame1, text='-')
+lbl_yesterday_value = Label(frame1, text='-')
+lbl_today_value.grid(column=1, row=0, sticky=W)
+lbl_yesterday_value.grid(column=1, row=1, sticky=W)
+
+cmbbox_time = Combobox(frame1, state='readonly', width=10)
+cmbbox_time.grid(column=0, row=2, sticky=W)
+cmbbox_time.bind("<<ComboboxSelected>>", time_select)
+
+lbl_time_value = Label(frame1, text='-')
+lbl_time_value.grid(column=1, row=2, sticky=W)
+
+frame1.grid(column=1, row=1, sticky=NW)
 
 #nb.pack(expand=1, fill='both')
 

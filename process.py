@@ -43,3 +43,38 @@ def numder_of_offers_by_cities(data):
     dic_of_offers = Counter(data_cities)
 
     return(dic_of_offers)
+
+def time_of_offers(data):
+    data_time = []
+
+    for i in data:
+        time = i[3]
+        chk_time = time.split(' ')
+
+        if chk_time[0] == 'Сегодня' or chk_time[0] == 'Вчера':
+            time = chk_time[0]
+        
+        data_time.append(time)
+
+    dic_time = Counter(data_time)
+
+    return dic_time
+
+def time_list(data):
+    data_time = []
+     
+    for i in data:
+        time = i[3]
+        chk_time = time.split(' ')
+
+        if chk_time[0] == 'Сегодня' or chk_time[0] == 'Вчера':
+            time = chk_time[0]
+
+        data_time.append(time)
+
+    new_time = [el for el, _ in groupby(data_time)]
+
+    new_time.remove('Сегодня')
+    new_time.remove('Вчера')
+
+    return (new_time)
