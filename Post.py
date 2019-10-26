@@ -1,3 +1,6 @@
+from tkinter import *
+from tkinter.ttk import *
+import webbrowser
 
 class Post():
     """Класс объявления"""
@@ -45,3 +48,18 @@ class Post_process():
 
         result = [round(avg), min_price, max_price]
         return (result)
+
+def call_url(url):
+        webbrowser.open_new(url)
+
+class EditLbl():
+
+    def __init__(self, root, text, row, column, width):
+        self.edit = Entry(root, width=width)
+        self.edit.grid(row=row, column=column, sticky=W)
+        self.edit.insert(0, text)
+        self.edit.configure(state='readonly')
+
+    def bind(self, url):
+        self.edit.bind("<Button-1>", lambda e: call_url(url))
+

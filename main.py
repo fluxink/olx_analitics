@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog as fd
+import webbrowser
 import url_dic
 import PythonApplication1
 import Post
@@ -341,6 +342,7 @@ def process_file(file_name):
     lbl_yesterday_value['text'] = times['Вчера']
 
     cmbbox_time['values'] = process.time_list(data)
+    cmbbox_time.current(0)
 
     cmbbox2_1['values'] = cities_list
 
@@ -350,6 +352,11 @@ def time_select(event):
     times = process.time_of_offers(data)
 
     lbl_time_value['text'] = times[cmbbox_time.get()]
+
+def clear_table():
+    list = frame_table.grid_slaves()
+    for l in list:
+        l.destroy()
 
 def city_select(event):
     csv_process = csv_failik.Csv_failik()
@@ -366,9 +373,23 @@ def city_select(event):
     lblvalue_min_price_in_city['text'] = prices_in_city[1]
     lblvalue_max_price_in_city['text'] = prices_in_city[2]
 
+    clear_table()
+    titlen = Post.EditLbl(root=frame_table, text='Название', row=0, column=0, width=45)
+    titlep = Post.EditLbl(root=frame_table, text='Цена', row=0, column=1, width=7)
+    titled = Post.EditLbl(root=frame_table, text='Дата', row=0, column=2, width=15)
+    row = 1
+    for post in data_p:
+        if post.city == city_name:
+            
+            name = Post.EditLbl(root=frame_table, text=post.name, row=row, column=0, width=45)
+            price = Post.EditLbl(root=frame_table, text=post.price, row=row, column=1, width=7)
+            date = Post.EditLbl(root=frame_table, text=post.date, row=row, column=2, width=15)
+            name.bind(post.url)
+            row=row+1
+
 root = Tk()
 root.title('OLX Analitics')
-root.geometry('420x600')
+root.geometry('425x600')
 
 file_name = 'olx.csv'
 
@@ -454,6 +475,8 @@ lbl_time_value.grid(column=1, row=2, sticky=W)
 
 frame1.grid(column=1, row=1, sticky=NW)
 
+frame_table = LabelFrame(root, text='Таблица')
+frame_table.grid(column=0, row=5, sticky=EW, columnspan=2)
 #nb.pack(expand=1, fill='both')
 
 root.mainloop()
