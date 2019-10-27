@@ -12,20 +12,23 @@ class Post():
         self.date = date
         self.url = url
 
-    def name():
-        return self.name
+    def __repr__(self):
+        return repr((self.name, self.price, self.city, self.date, self.url))
 
-    def price():
-        return self.price
+    #def name():
+        #return self.name
 
-    def city():
-        return self.city
+    #def price():
+        #return self.price
 
-    def date():
-        return self.date
+    #def city():
+        #return self.city
 
-    def url():
-        return self.url
+    #def date():
+        #return self.date
+
+    #def url():
+        #return self.url
 
 class Post_process():
 

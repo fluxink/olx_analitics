@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog as fd
+from tkinter import tix
 import webbrowser
 import url_dic
 import PythonApplication1
@@ -353,10 +354,18 @@ def time_select(event):
 
     lbl_time_value['text'] = times[cmbbox_time.get()]
 
-def clear_table():
-    list = frame_table.grid_slaves()
-    for l in list:
-        l.destroy()
+def select_sort(up):
+    
+    #list = canv_frame.grid_slaves()
+    #for l in list:
+        #l.grid_forget()
+
+    csv_process = csv_failik.Csv_failik()
+    data_p = csv_process.fill_posts(file_name)
+
+    data_p.sort(key=lambda post: post.price, reverse=up)
+    city_name = cmbbox2_1.get()
+    table = Table_frame(data_p, city_name)
 
 def city_select(event):
     csv_process = csv_failik.Csv_failik()
@@ -372,24 +381,50 @@ def city_select(event):
     lblvalue_avg_price_in_city['text'] = prices_in_city[0]
     lblvalue_min_price_in_city['text'] = prices_in_city[1]
     lblvalue_max_price_in_city['text'] = prices_in_city[2]
+    
+    frame_sort.grid(column=1, row=4, sticky=NW)
+    sort_button1.grid(column=0, row=0)
+    sort_button2.grid(column=1, row=0)
 
-    clear_table()
-    titlen = Post.EditLbl(root=frame_table, text='Название', row=0, column=0, width=45)
-    titlep = Post.EditLbl(root=frame_table, text='Цена', row=0, column=1, width=7)
-    titled = Post.EditLbl(root=frame_table, text='Дата', row=0, column=2, width=15)
-    row = 1
-    for post in data_p:
-        if post.city == city_name:
+    table = Table_frame(data_p, city_name)
+
+def myfunction(event):
+    canvas.configure(scrollregion=canvas.bbox("all"),width=420,height=200)
+
+class Table_frame(LabelFrame):
+
+    def __init__(self, data_p, city_name):
+        self.frame_table = LabelFrame(canvas, text='Таблица')
+        self.frame_table.grid(column=0, row=0, sticky=EW, columnspan=2)
+        self.clear_table()
+
+        myscrollbar.grid(column=2, row=0, sticky=NS)
+        canv_frame.columnconfigure(2, weight=1)
+        canvas.grid(column=0, row=0)
+        canvas.create_window((0, 0), window=self.frame_table, anchor='nw')
+        self.frame_table.bind("<Configure>", myfunction)
+
+        titlen = Post.EditLbl(root=self.frame_table, text='Название', row=0, column=0, width=45)
+        titlep = Post.EditLbl(root=self.frame_table, text='Цена', row=0, column=1, width=7)
+        titled = Post.EditLbl(root=self.frame_table, text='Дата', row=0, column=2, width=15)
+        row = 1
+        for post in data_p:
+            if post.city == city_name:
             
-            name = Post.EditLbl(root=frame_table, text=post.name, row=row, column=0, width=45)
-            price = Post.EditLbl(root=frame_table, text=post.price, row=row, column=1, width=7)
-            date = Post.EditLbl(root=frame_table, text=post.date, row=row, column=2, width=15)
-            name.bind(post.url)
-            row=row+1
+                name = Post.EditLbl(root=self.frame_table, text=post.name, row=row, column=0, width=45)
+                price = Post.EditLbl(root=self.frame_table, text=post.price, row=row, column=1, width=7)
+                date = Post.EditLbl(root=self.frame_table, text=post.date, row=row, column=2, width=15)
+                name.bind(post.url)
+                row=row+1
 
-root = Tk()
+    def clear_table(self):
+        list = self.frame_table.grid_slaves()
+        for l in list:
+            l.destroy()
+
+root = tix.Tk()
 root.title('OLX Analitics')
-root.geometry('425x600')
+root.geometry('445x480')
 
 file_name = 'olx.csv'
 
@@ -475,8 +510,17 @@ lbl_time_value.grid(column=1, row=2, sticky=W)
 
 frame1.grid(column=1, row=1, sticky=NW)
 
-frame_table = LabelFrame(root, text='Таблица')
-frame_table.grid(column=0, row=5, sticky=EW, columnspan=2)
+canv_frame = Frame(root)
+canv_frame.grid(column=0, row=5, sticky=EW, columnspan=2)
+
+canvas = Canvas(canv_frame)
+myscrollbar=Scrollbar(canv_frame,orient="vertical",command=canvas.yview)
+canvas.configure(yscrollcommand=myscrollbar.set)
+
+frame_sort = LabelFrame(root, text='Сортировка по цене')
+sort_button1 = Button(frame_sort, text='Дорогие', command= lambda: select_sort(True))
+sort_button2 = Button(frame_sort, text='Дешевые', command= lambda: select_sort(False))
+
 #nb.pack(expand=1, fill='both')
 
 root.mainloop()
