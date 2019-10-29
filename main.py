@@ -30,12 +30,52 @@ def save_file():
 
 class Datawindow():
 
+    def start(self, url, file_name, pages):
+
+        try:
+            usr_pages = int(pages)
+        except:
+            usr_pages = ''
+
+        page_part = '/?page='
+        csv_file = csv_failik.Csv_failik()
+
+        total_pages = PythonApplication1.get_total_pages(PythonApplication1.get_html(url))
+
+        try:
+            if total_pages < usr_pages:
+                gnrl_pages = total_pages
+
+            elif usr_pages < total_pages:
+                gnrl_pages = usr_pages
+
+            else:
+                gnrl_pages = total_pages
+        except:
+            gnrl_pages = total_pages
+
+        csv_file.create_csv(file_name)
+
+        print('Будет обработано страниц: ' + str(gnrl_pages))
+
+        self.progress_bar['maximum'] = gnrl_pages - 1
+
+        for i in range(1, gnrl_pages):
+            url_gen = url + page_part + str(i)
+            html = PythonApplication1.get_html(url_gen)
+            csv_file.write_csv(file_name, data=PythonApplication1.get_page_data(html))
+            self.progress_bar['value'] = i
+            self.progress_bar.update()
+
     def main(self):
         self.search_request = StringVar()
+        self.max_value = 0
+        self.progress_value = 0
 
         self.data_window = Toplevel(root)
         self.data_window.title('Сбор данных')
         self.data_window.geometry('290x250')
+        self.data_window.resizable(width=False, height=False)
         self.data_window.grab_set()
         self.data_window.focus()
 
@@ -68,15 +108,25 @@ class Datawindow():
         self.cmbbox1_2.bind("<<ComboboxSelected>>", self.event_cmbbx2)
 
         self.lbl1_3 = Label(self.data_window, text='Раздел')
-        self.cmbbox1_3 = Combobox(self.data_window, width=30, state='readonly')
+        self.cmbbox1_3 = Combobox(self.data_window, width=30, state='disabled')
         self.cmbbox1_3.bind("<<ComboboxSelected>>", self.cmbbox4_create)
 
         self.lbl1_4 = Label(self.data_window, text='Подраздел')
-        self.cmbbox1_4 = Combobox(self.data_window, state='readonly', width=30)
+        self.cmbbox1_4 = Combobox(self.data_window, state='disabled', width=30)
 
-        self.start_button = Button(self.data_window, text='Кнопачка', command=self.start_pars)
+        self.start_button = Button(self.data_window, text='OK', command=self.start_pars)
         self.start_button.grid(column=0, row=13)
 
+        self.cmbbox1_3.grid(column=0, row=9, sticky=W)
+        self.lbl1_3.grid(column=0, row=8, sticky=W)
+
+        self.cmbbox1_4.grid(column=0, row=12, sticky=W)
+        self.lbl1_4.grid(column=0, row=11, sticky=W)
+
+        self.progress_bar = Progressbar(self.data_window, orient='vertical', length=140, mode='determinate')
+        self.progress_bar.grid(column=1, row=3, rowspan=10, sticky=S)
+        self.progress_bar['value'] = self.progress_value
+        
         #self.data_window.mainloop()
 
     def callback(self, P):
@@ -115,24 +165,20 @@ class Datawindow():
         self.cmbbox1_2.current(0)
 
     def pack_cmbbox3_lbl3(self, view):
-        if view == True:
-            self.cmbbox1_3.grid(column=0, row=9, sticky=W)
-            self.lbl1_3.grid(column=0, row=8, sticky=W)
-        else:
+        if view == False:
             self.cmbbox1_3['values'] = empty
             self.cmbbox1_3.current(0)
-            self.cmbbox1_3.grid_forget()
-            self.lbl1_3.grid_forget()
+            self.cmbbox1_3.config(state='disabled')
+        else:
+            self.cmbbox1_3.config(state='readonly')
 
     def pack_cmbbox4_lbl4(self, view):
-        if view == True:
-            self.cmbbox1_4.grid(column=0, row=12, sticky=W)
-            self.lbl1_4.grid(column=0, row=11, sticky=W)
-        else:
+        if view == False:
             self.cmbbox1_4['values'] = empty
             self.cmbbox1_4.current(0)
-            self.cmbbox1_4.grid_forget()
-            self.lbl1_4.grid_forget()
+            self.cmbbox1_4.config(state='disabled')
+        else:
+            self.cmbbox1_4.config(state='readonly')
 
     def cmbbox4_create(self, event):
 
@@ -322,7 +368,7 @@ class Datawindow():
         print(url)
         global file_name
         file_name = 'olx.csv'
-        PythonApplication1.start(url, file_name, number_of_pages.get())
+        self.start(url, file_name, number_of_pages.get())
         process_file(file_name)
 
 def process_file(file_name):
@@ -342,8 +388,11 @@ def process_file(file_name):
     lbl_today_value['text'] = times['Сегодня']
     lbl_yesterday_value['text'] = times['Вчера']
 
-    cmbbox_time['values'] = process.time_list(data)
-    cmbbox_time.current(0)
+    try:
+        cmbbox_time['values'] = process.time_list(data)
+        cmbbox_time.current(0)
+    except:
+        cmbbox_time['values'] = empty
 
     cmbbox2_1['values'] = cities_list
 
@@ -351,8 +400,10 @@ def time_select(event):
     csv_process = csv_failik.Csv_failik()
     data = csv_process.read_csv(file_name)
     times = process.time_of_offers(data)
-
-    lbl_time_value['text'] = times[cmbbox_time.get()]
+    try:
+        lbl_time_value['text'] = times[cmbbox_time.get()]
+    except:
+        lbl_time_value['text'] = '-'
 
 def select_sort(up):
     
@@ -425,6 +476,7 @@ class Table_frame(LabelFrame):
 root = tix.Tk()
 root.title('OLX Analitics')
 root.geometry('445x480')
+root.resizable(width=False, height=False)
 
 file_name = 'olx.csv'
 

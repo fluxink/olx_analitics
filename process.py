@@ -74,7 +74,12 @@ def time_list(data):
 
     new_time = [el for el, _ in groupby(data_time)]
 
-    new_time.remove('Сегодня')
-    new_time.remove('Вчера')
-
+    try:
+        new_time.remove('Сегодня')
+    except:
+        print('Ошибка даты в данных (1)')
+    try:
+        new_time.remove('Вчера')
+    except:
+        print('Ошибка даты в данных (2)')
     return (new_time)
