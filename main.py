@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog as fd
 from tkinter import tix
+from PIL import ImageTk, Image
 import webbrowser
 import url_dic
 import PythonApplication1
@@ -75,6 +76,7 @@ class Datawindow():
         self.data_window = Toplevel(root)
         self.data_window.title('Сбор данных')
         self.data_window.geometry('290x250')
+        self.data_window.iconbitmap('olx.ico')
         self.data_window.resizable(width=False, height=False)
         self.data_window.grab_set()
         self.data_window.focus()
@@ -442,6 +444,54 @@ def city_select(event):
 def myfunction(event):
     canvas.configure(scrollregion=canvas.bbox("all"),width=420,height=200)
 
+class About_Window():
+
+    def main():
+        about_window = Toplevel(root)
+        about_window.title('О программе')
+        about_window.geometry('180x80')
+        about_window.iconbitmap('olx.ico')
+        about_window.resizable(width=False, height=False)
+        about_window.grab_set()
+        about_window.focus()
+
+        lbl_author = Label(about_window, text='Автор:')
+        author = Label(about_window, text='Павел Волков')
+        lbl_email = Label(about_window, text='E-mail:')
+        email = Label(about_window, text='pavelvolk300@gmail.com')
+
+        frame = Frame(about_window)
+        
+        inst_img = Image.open("instagram.png")
+        telegram_img = Image.open("telegram.png")
+        youtube_img = Image.open("youtube.png")
+
+        inst_r = ImageTk.PhotoImage(inst_img)
+        telegram_r = ImageTk.PhotoImage(telegram_img)
+        youtube_r = ImageTk.PhotoImage(youtube_img)
+
+        inst = Label(frame, image=inst_r)
+        inst.image = inst_r
+        telegram = Label(frame, image=telegram_r)
+        telegram.image = telegram_r
+        youtube = Label(frame, image=youtube_r)
+        youtube.image = youtube_r
+
+        youtube.bind("<Button-1>", lambda e: Post.call_url('https://www.youtube.com/channel/UCm8hdNz9JhgzZywCQXzYe1Q'))
+        inst.bind("<Button-1>", lambda e: Post.call_url('https://www.instagram.com/flutter_wolf/'))
+        telegram.bind("<Button-1>", lambda e: Post.call_url('https://www.t.me/PavelVolK2014'))
+
+        inst.grid(column=0, row=0)
+        telegram.grid(column=1, row=0)
+        youtube.grid(column=2, row=0)
+
+        lbl_author.grid(column=0, row=0)
+        author.grid(column=1, row=0)
+        lbl_email.grid(column=0, row=1)
+        email.grid(column=1, row=1)
+        frame.grid(column=0, row=2, columnspan=2)
+
+
 class Table_frame(LabelFrame):
 
     def __init__(self, data_p, city_name):
@@ -477,6 +527,7 @@ root = tix.Tk()
 root.title('OLX Analitics')
 root.geometry('445x480')
 root.resizable(width=False, height=False)
+root.iconbitmap('olx.ico')
 
 file_name = 'olx.csv'
 
@@ -501,7 +552,7 @@ filemenu.add_separator()
 filemenu.add_command(label='Выход', command=root.destroy)
 
 helpmenu = Menu(mainmenu, tearoff=0)
-helpmenu.add_command(label='О программе')
+helpmenu.add_command(label='О программе', command=About_Window.main)
 
 mainmenu.add_cascade(label='Файл', menu=filemenu)
 mainmenu.add_cascade(label='Справка', menu=helpmenu)
