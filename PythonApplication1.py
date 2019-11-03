@@ -2,6 +2,8 @@
 import requests
 from bs4 import BeautifulSoup
 import csv_failik
+from tkinter import *
+from tkinter import messagebox as mb
 
 def get_html(url):
 	r = requests.get(url)
@@ -10,7 +12,10 @@ def get_html(url):
 def get_total_pages(html):
 	soup = BeautifulSoup(html, 'lxml')
 
-	pages = soup.find('div', class_='pager rel clr').find_all('a', class_='block br3 brc8 large tdnone lheight24')[-1].get('href')
+	try:
+		pages = soup.find('div', class_='pager rel clr').find_all('a', class_='block br3 brc8 large tdnone lheight24')[-1].get('href')
+	except:
+		mb.showerror('Ошибка', 'Количество объявлений на сайте меньше 39')
 	total_pages = pages.split('=')[-1]
 
 	print('Всего страниц: ' + total_pages)
