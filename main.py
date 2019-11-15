@@ -495,31 +495,19 @@ class About_Window():
 class Table_frame(LabelFrame):
 
     def __init__(self, data_p, city_name):
-        self.frame_table = LabelFrame(canvas, text='Таблица')
-        self.frame_table.grid(column=0, row=0, sticky=EW, columnspan=2)
         self.clear_table()
-
-        myscrollbar.grid(column=2, row=0, sticky=NS)
-        canv_frame.columnconfigure(2, weight=1)
-        canvas.grid(column=0, row=0)
-        canvas.create_window((0, 0), window=self.frame_table, anchor='nw')
-        self.frame_table.bind("<Configure>", myfunction)
-
-        titlen = Post.EditLbl(root=self.frame_table, text='Название', row=0, column=0, width=45)
-        titlep = Post.EditLbl(root=self.frame_table, text='Цена', row=0, column=1, width=7)
-        titled = Post.EditLbl(root=self.frame_table, text='Дата', row=0, column=2, width=15)
         row = 1
         for post in data_p:
             if post.city == city_name:
             
-                name = Post.EditLbl(root=self.frame_table, text=post.name, row=row, column=0, width=45)
-                price = Post.EditLbl(root=self.frame_table, text=post.price, row=row, column=1, width=7)
-                date = Post.EditLbl(root=self.frame_table, text=post.date, row=row, column=2, width=15)
+                name = Post.EditLbl(root=frame_table, text=post.name, row=row, column=0, width=45)
+                price = Post.EditLbl(root=frame_table, text=post.price, row=row, column=1, width=7)
+                date = Post.EditLbl(root=frame_table, text=post.date, row=row, column=2, width=15)
                 name.bind(post.url)
                 row=row+1
 
     def clear_table(self):
-        list = self.frame_table.grid_slaves()
+        list = frame_table.grid_slaves()
         for l in list:
             l.destroy()
 
@@ -624,6 +612,17 @@ frame_sort = LabelFrame(root, text='Сортировка по цене')
 sort_button1 = Button(frame_sort, text='Дорогие', command= lambda: select_sort(True))
 sort_button2 = Button(frame_sort, text='Дешевые', command= lambda: select_sort(False))
 
-#nb.pack(expand=1, fill='both')
+frame_table = LabelFrame(canvas, text='Таблица')
+frame_table.grid(column=0, row=0, sticky=EW, columnspan=2)
+
+myscrollbar.grid(column=2, row=0, sticky=NS)
+canv_frame.columnconfigure(2, weight=1)
+canvas.grid(column=0, row=0)
+canvas.create_window((0, 0), window=frame_table, anchor='nw')
+frame_table.bind("<Configure>", myfunction)
+
+titlen = Post.EditLbl(root=frame_table, text='Название', row=0, column=0, width=45)
+titlep = Post.EditLbl(root=frame_table, text='Цена', row=0, column=1, width=7)
+titled = Post.EditLbl(root=frame_table, text='Дата', row=0, column=2, width=15)
 
 root.mainloop()
